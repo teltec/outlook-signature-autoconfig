@@ -1,0 +1,144 @@
+<html xmlns="http://www.w3.org/TR/REC-html40">
+
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+<meta name="Author" content="Teltec Solutions Ltda">
+<style>
+<!--
+a
+{
+	text-decoration: underline;	
+}
+a:link
+{
+	color: blue;
+}
+a:visited
+{
+	color: purple;
+}	
+
+div.Assinatura
+{
+	font-size: 11.0pt;
+	font-family: "Arial","sans-serif";
+	color: #595959;
+}
+
+.Mostra
+{
+}
+
+.Esconde
+{
+    max-height: 0; /* Gmail*/
+    display: none; /* Generic*/
+    mso-hide: all; /* Outlook clients*/
+    overflow: hidden; /* Generic */
+}
+
+p.Paragrafo
+{
+	margin: 0cm;
+	margin-bottom: .0001pt;
+}
+p.ParagrafoVazio
+{
+	margin: 0cm;
+	margin-bottom: .0001pt;
+	font-size: 5.0pt;
+}
+
+span.NomeColaborador
+{
+	font-size: 10.0pt;
+	font-weight: bold;
+}
+span.Cargo
+{
+	font-size: 9.0pt;
+}
+span.NomeEmpresa
+{
+	font-size: 10.0pt;
+	font-weight: bold;
+}
+span.TelefoneLabel
+{
+	font-size: 9.0pt;
+	font-weight: bold;
+}
+span.TelefoneDDD
+{
+	font-size: 8.0pt;
+}
+span.TelefoneNumero
+{
+	font-size: 9.0pt;
+}
+span.TelefoneDivisor
+{
+	font-size: 9.0pt;
+}
+
+span.ImagemAssinatura
+{
+
+}
+span.ImagemAssinatura a
+{
+	text-decoration: none;	
+}
+span.ImagemAssinatura img
+{
+	border: 0;
+}
+-->
+</style>
+</head>
+
+<body lang="pt-BR">
+	<div class="Assinatura">
+
+		<p class="Paragrafo"><span>&nbsp;</span></p>
+
+		<p class="Paragrafo"><span class="NomeColaborador">__ATTR_NOME_COLABORADOR__</span></p>
+		<p class="Paragrafo"><span class="Cargo">__ATTR_CARGO__</span></p>
+
+		<p class="ParagrafoVazio"><span>&nbsp;</span></p>
+
+		<p class="Paragrafo"><span class="NomeEmpresa">__ATTR_NOME_EMPRESA__</span></p>
+
+		<p class="Paragrafo">
+			<span class="TelefoneLabel">Fone:</span>
+			<span class="TelefoneDDD">&nbsp;__ATTR_TELEFONE_DDD__</span>
+			<span class="TelefoneNumero">&nbsp;__ATTR_TELEFONE__</span>
+
+			<span class="TelefoneDivisor">&nbsp;|&nbsp;</span>
+
+			<span class="TelefoneLabel">DDR:</span>
+			<span class="TelefoneNumero">&nbsp;__ATTR_RAMAL__</span>
+
+			<span class="__ATTR_MOSTRA_CELULAR__">
+				<span class="TelefoneDivisor">&nbsp;|&nbsp;</span>
+
+				<span class="TelefoneLabel">Cel:</span>
+				<span class="TelefoneDDD">&nbsp;__ATTR_CELULAR_DDD__</span>
+				<span class="TelefoneNumero">&nbsp;__ATTR_CELULAR__</span>
+			</span>
+		</p>
+
+		<p class="Paragrafo">
+			<br>
+			<a href="__ATTR_IMAGEM_LINK__" target="_blank">
+				<span class="ImagemAssinatura">
+					<img src="__ATTR_IMAGEM_URL__">
+				</span>
+			</a>
+		</p>
+
+		<p class="ParagrafoVazio">&nbsp;</p>
+	</div>
+
+</body>
+</html>
