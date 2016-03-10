@@ -193,6 +193,8 @@ Function CreateSignatureFilesForLdapUser(ByVal targetDirectory, ByVal templateDi
 	'
 	Dim nomeUsuario: nomeUsuario = ConvertToString(objLdapUser.Fields("sAMAccountName"))
 	Dim attrNomeCompleto: attrNomeCompleto = ConvertToString(objLdapUser.Fields("displayName"))
+	Dim attrNomeCompletoSplit: attrNomeCompletoSplit = Split(attrNomeCompleto, "(")
+	attrNomeCompleto = Trim(attrNomeCompletoSplit(0))
 	Dim attrCargo: attrCargo = ConvertToString(objLdapUser.Fields("title"))
 	
 	Dim attrEmpresa: attrEmpresa = ConvertToString(objLdapUser.Fields("company"))
