@@ -35,10 +35,12 @@ Include "app_config"
 Include "common"
 Include "log"
 Include "array"
+Include "dictionary"
 Include "regex"
 Include "string"
 Include "filesystem"
 Include "network"
+Include "template"
 
 '----------------------------------------------------------------------------------------
 
@@ -205,6 +207,7 @@ Function CreateSignatureFilesForLdapUser(ByVal targetDirectory, ByVal templateDi
 	Dim attrTelefone: attrTelefone = FormatPhoneNumber(rawAttrTelefone)
 	
 	Dim attrRamal: attrRamal = ConvertToString(objLdapUser.Fields("telephoneNumber"))
+	Dim hasAttrRamal: hasAttrRamal = Not IsNullOrEmptyStr(attrRamal)
 
 	Dim rawAttrCelular: rawAttrCelular = ConvertToString(objLdapUser.Fields("mobile"))
 	Dim hasAttrCelular: hasAttrCelular = Not IsNullOrEmptyStr(rawAttrCelular)
@@ -263,16 +266,7 @@ Function CreateSignatureFilesForLdapUser(ByVal targetDirectory, ByVal templateDi
 				Exit Function
 			End If
 			
-			Set objFSO = CreateObject("Scripting.FileSystemObject")
-			
-			Dim objFile
-			Set objFile = objFSO.OpenTextFile(templateFilePath, ForReading)
-			
-			inputTemplateContent = objFile.ReadAll
-			
-			objFile.Close
-			Set objFile = Nothing
-			Set objFSO = Nothing
+			inputTemplateContent = ReadTemplateFromFile(templateFilePath)
 		End If
 		
 		' Create the signature file.
@@ -286,38 +280,34 @@ Function CreateSignatureFilesForLdapUser(ByVal targetDirectory, ByVal templateDi
 		Set signatureFile = objFSO.CreateTextFile(signatureFilePath, True)
 		
 		' Prepare the template
-		Dim outputTemplateContent
-		If Not IsNullOrEmptyStr(inputTemplateContent) Then
-			outputTemplateContent = inputTemplateContent
-		Else
-			outputTemplateContent = "" _
+		If IsNullOrEmptyStr(inputTemplateContent) Then
+			inputTemplateContent = "" _
 				& "Atenciosamente," & vbCrlf _
 				& vbCrlf _
-				& "__ATTR_NOME_COLABORADOR__" & vbCrlf _
-				& "__ATTR_CARGO__" & vbCrlf _
+				& "{{ATTR_NOME_COLABORADOR}}" & vbCrlf _
+				& "{{ATTR_CARGO}}" & vbCrlf _
 				& vbCrlf _
-				& "__ATTR_NOME_EMPRESA__" & vbCrlf _
-				& "Fone: __ATTR_TELEFONE__ | DDR: __ATTR_RAMAL__" _
-					& IIf(IsNullOrEmptyStr(rawAttrCelular), "", " | Cel: __ATTR_CELULAR__") & vbCrlf _
+				& "{{ATTR_NOME_EMPRESA}}" & vbCrlf _
+				& "Fone: {{ATTR_TELEFONE}}{% if ATTR_MOSTRA_RAMAL %} | DDR: {{ATTR_RAMAL}}{% end if %}{% if ATTR_MOSTRA_CELULAR %} | Cel: {{ATTR_CELULAR}}{% end if %}" & vbCrlf _
 				& vbCrlf _
-				& "[__ATTR_IMAGEM_URL__](__ATTR_IMAGEM_LINK__)" & vbCrlf
+				& "[{{ATTR_IMAGEM_URL}}]({{ATTR_IMAGEM_LINK}})" & vbCrlf
 		End If
 		
-		' Replace template placeholders.
-		outputTemplateContent = Replace(outputTemplateContent, "__ATTR_NOME_COLABORADOR__", attrNomeCompleto)
-		outputTemplateContent = Replace(outputTemplateContent, "__ATTR_CARGO__", attrCargo)
-		outputTemplateContent = Replace(outputTemplateContent, "__ATTR_NOME_EMPRESA__", attrEmpresa)
-		outputTemplateContent = Replace(outputTemplateContent, "__ATTR_TELEFONE_DDD__", attrTelefone(0))
-		outputTemplateContent = Replace(outputTemplateContent, "__ATTR_TELEFONE__", attrTelefone(1))
-		outputTemplateContent = Replace(outputTemplateContent, "__ATTR_RAMAL__", attrRamal)
-		outputTemplateContent = Replace(outputTemplateContent, "__ATTR_MOSTRA_CELULAR__", IIf(hasAttrCelular, "Mostra", "Esconde"))
-		outputTemplateContent = Replace(outputTemplateContent, "__ATTR_CELULAR_DDD__", attrCelular(0))
-		outputTemplateContent = Replace(outputTemplateContent, "__ATTR_CELULAR__", attrCelular(1))
-		outputTemplateContent = Replace(outputTemplateContent, "__ATTR_IMAGEM_LINK__", "<TODO:__ATTR_IMAGEM_LINK__>")
-		outputTemplateContent = Replace(outputTemplateContent, "__ATTR_IMAGEM_URL__", "<TODO:__ATTR_IMAGEM_URL__>")
+		Dim context: Set context = New Dictionary
+		Call context.Append("ATTR_NOME_COLABORADOR", attrNomeCompleto)
+		Call context.Append("ATTR_CARGO", attrCargo)
+		Call context.Append("ATTR_NOME_EMPRESA", attrEmpresa)
+		Call context.Append("ATTR_TELEFONE_DDD", attrTelefone(0))
+		Call context.Append("ATTR_TELEFONE", attrTelefone(1))
+		Call context.Append("ATTR_MOSTRA_RAMAL", hasAttrRamal)
+		Call context.Append("ATTR_RAMAL", attrRamal)
+		Call context.Append("ATTR_MOSTRA_CELULAR", hasAttrCelular)
+		Call context.Append("ATTR_CELULAR_DDD", attrCelular(0))
+		Call context.Append("ATTR_CELULAR", attrCelular(1))
+		Dim rendered: rendered = RenderTemplate(inputTemplateContent, context)
 		
 		' Write it.
-		signatureFile.Write(outputTemplateContent)
+		signatureFile.Write(rendered)
 		
 		' Close it.
 		signatureFile.Close
@@ -390,4 +380,23 @@ End Sub
 
 '----------------------------------------------------------------------------------------
 
+Sub Test_Template_1()
+	Dim context: Set context = New Dictionary
+	Call context.Append("ATTR_NOME_COLABORADOR", "John Doe")
+	Call context.Append("ATTR_CARGO", "Chief of Nothing")
+	Call context.Append("ATTR_NOME_EMPRESA", "My Company Name")
+	Call context.Append("ATTR_TELEFONE_DDD", "48")
+	Call context.Append("ATTR_TELEFONE", "1234-5678")
+	Call context.Append("ATTR_RAMAL", "999")
+	Call context.Append("ATTR_MOSTRA_CELULAR", False)
+	Call context.Append("ATTR_CELULAR_DDD", "48")
+	Call context.Append("ATTR_CELULAR", "9-9999-0000")
+	Dim rendered: rendered = RenderTemplate(ReadTemplateFromFile("c:\temp\a.txt"), context)
+	Wscript.Echo rendered
+	Wscript.Quit
+End Sub
+
+'----------------------------------------------------------------------------------------
+
+'Test_Template_1()
 Main()

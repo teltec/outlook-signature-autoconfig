@@ -25,18 +25,6 @@ div.Assinatura
 	color: #595959;
 }
 
-.Mostra
-{
-}
-
-.Esconde
-{
-    max-height: 0; /* Gmail*/
-    display: none; /* Generic*/
-    mso-hide: all; /* Outlook clients*/
-    overflow: hidden; /* Generic */
-}
-
 p.Paragrafo
 {
 	margin: 0cm;
@@ -102,37 +90,39 @@ span.ImagemAssinatura img
 
 		<p class="Paragrafo"><span>&nbsp;</span></p>
 
-		<p class="Paragrafo"><span class="NomeColaborador">__ATTR_NOME_COLABORADOR__</span></p>
-		<p class="Paragrafo"><span class="Cargo">__ATTR_CARGO__</span></p>
+		<p class="Paragrafo"><span class="NomeColaborador">{{ATTR_NOME_COLABORADOR}}</span></p>
+		<p class="Paragrafo"><span class="Cargo">{{ATTR_CARGO}}</span></p>
 
 		<p class="ParagrafoVazio"><span>&nbsp;</span></p>
 
-		<p class="Paragrafo"><span class="NomeEmpresa">__ATTR_NOME_EMPRESA__</span></p>
+		<p class="Paragrafo"><span class="NomeEmpresa">{{ATTR_NOME_EMPRESA}}</span></p>
 
 		<p class="Paragrafo">
 			<span class="TelefoneLabel">Fone:</span>
-			<span class="TelefoneDDD">&nbsp;__ATTR_TELEFONE_DDD__</span>
-			<span class="TelefoneNumero">&nbsp;__ATTR_TELEFONE__</span>
+			<span class="TelefoneDDD">&nbsp;{{ATTR_TELEFONE_DDD}}</span>
+			<span class="TelefoneNumero">&nbsp;{{ATTR_TELEFONE}}</span>
 
+			{% if ATTR_MOSTRA_RAMAL %}
 			<span class="TelefoneDivisor">&nbsp;|&nbsp;</span>
 
 			<span class="TelefoneLabel">DDR:</span>
-			<span class="TelefoneNumero">&nbsp;__ATTR_RAMAL__</span>
+			<span class="TelefoneNumero">&nbsp;{{ATTR_RAMAL}}</span>
+			{% endif %}
+			
+			{% if ATTR_MOSTRA_CELULAR %}
+			<span class="TelefoneDivisor">&nbsp;|&nbsp;</span>
 
-			<span class="__ATTR_MOSTRA_CELULAR__">
-				<span class="TelefoneDivisor">&nbsp;|&nbsp;</span>
-
-				<span class="TelefoneLabel">Cel:</span>
-				<span class="TelefoneDDD">&nbsp;__ATTR_CELULAR_DDD__</span>
-				<span class="TelefoneNumero">&nbsp;__ATTR_CELULAR__</span>
-			</span>
+			<span class="TelefoneLabel">Cel:</span>
+			<span class="TelefoneDDD">&nbsp;{{ATTR_CELULAR_DDD}}</span>
+			<span class="TelefoneNumero">&nbsp;{{ATTR_CELULAR}}</span>
+			{% endif %}
 		</p>
 
 		<p class="Paragrafo">
 			<br>
-			<a href="__ATTR_IMAGEM_LINK__" target="_blank">
+			<a href="{{ATTR_IMAGEM_LINK}}" target="_blank">
 				<span class="ImagemAssinatura">
-					<img src="__ATTR_IMAGEM_URL__">
+					<img src="{{ATTR_IMAGEM_URL}}">
 				</span>
 			</a>
 		</p>

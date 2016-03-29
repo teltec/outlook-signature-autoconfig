@@ -30,3 +30,7 @@ End Function
 Function EndsWith(ByVal str, ByVal prefix)
 	EndsWith = Right(str, Len(prefix)) = prefix
 End Function
+
+Function ReplaceRange(original, first, length, replacement)
+	ReplaceRange = Left(original, first) & replacement & Mid(original, first + length + 1)
+End Function
