@@ -37,7 +37,11 @@ Function RegGetValueType(ByVal defKey, ByVal subKeyName, ByVal valueName)
 		Next
 	End If
 	
-	RegGetValueType = IIf(found, arrValueTypes(i), REG_INVALID)
+	If found Then
+		RegGetValueType = arrValueTypes(i)
+	Else
+		RegGetValueType =  REG_INVALID
+	End If
 	
 	Set objReg = Nothing
 End Function
