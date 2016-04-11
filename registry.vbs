@@ -29,7 +29,7 @@ Function RegGetValueType(ByVal defKey, ByVal subKeyName, ByVal valueName)
 		'For i = 0 To UBound(arrValueNames)
 		'	LogDebug("arrValueNames[" & i & "] = " & arrValueNames(i))
 		'Next
-		For i = 0 To UBound(arrValueNames)
+		For i = LBound(arrValueNames) To UBound(arrValueNames)
 			If arrValueNames(i) = valueName Then
 				found = True
 				Exit For
@@ -101,7 +101,7 @@ Function RegBinaryToString(ByRef value())
 	Dim result: result = ""
 	
 	Dim i
-	For i = 0 To UBound(value)
+	For i = LBound(value) To UBound(value)
 		If value(i) <> 0 Then result = result & Chr(value(i)) 
 	Next
 	
@@ -113,9 +113,9 @@ Function RegStringToBinary(ByVal value)
 	Dim length: length = Len(value)
 		
 	Dim i
-	For i = 0 to length - 1
-		Dim ascii: ascii = Asc(Mid(value, i + 1, 1))
-		result = IIf(i = 0, ascii & ",00", result & "," & ascii & ",00")
+	For i = 1 to length
+		Dim ascii: ascii = Asc(Mid(value, i, 1))
+		result = IIf(i = 1, ascii & ",00", result & "," & ascii & ",00")
 	Next
 	
 	result = result & ",00,00"
@@ -125,9 +125,10 @@ End Function
 
 Function RegStringToBinaryStr(ByVal value)
 	Dim result: result = ""
+	Dim length: length = Len(value)
 	
 	Dim i
-	For i = 1 to Len(value)
+	For i = 1 to length
 		result = result & Hex(AscW(Mid(value, i, 1))) & ",00,"
 	Next
 	

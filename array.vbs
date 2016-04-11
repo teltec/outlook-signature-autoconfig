@@ -28,7 +28,7 @@ End Function
 
 Function ArrayCountNotEmptyOrNull(ByRef array())
 	Dim i, count: count = 0
-	For i = 0 To UBound(array)
+	For i = LBound(array) To UBound(array)
 		If Not (IsEmpty(array(i)) Or IsNull(array(i))) Then
 			count = count + 1
 		End If
@@ -41,7 +41,7 @@ Function ArrayFind(ByRef array(), ByRef value)
 	ArrayFind = -1
 	Dim found: found = False
 	Dim i
-	For i = 0 To UBound(array)
+	For i = LBound(array) To UBound(array)
 		If array(i) = value Then
 			found = True
 			ArrayFind = i
