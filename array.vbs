@@ -23,7 +23,13 @@ Function IsArrayOf(ByRef value, ByVal valueType)
 End Function
 
 Function ArraySize(ByRef array())
-	If array = vbEmpty Or array = vbNull Then
+	If VarType(array) = vbNull Or VarType(array) = vbEmpty Then
+		ArraySize = 0
+		Exit Function
+	End If
+
+	If Not IsArray(array) Then
+		LogDebug("ArraySize: the parameter is not an array")
 		ArraySize = 0
 		Exit Function
 	End If
