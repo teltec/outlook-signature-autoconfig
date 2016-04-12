@@ -23,6 +23,11 @@ Function IsArrayOf(ByRef value, ByVal valueType)
 End Function
 
 Function ArraySize(ByRef array())
+	If array = vbEmpty Or array = vbNull Then
+		ArraySize = 0
+		Exit Function
+	End If
+	
 	ArraySize = UBound(array) + 1
 End Function
 

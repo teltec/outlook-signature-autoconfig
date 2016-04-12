@@ -33,6 +33,7 @@ Include "common"
 Include "log"
 Include "string"
 Include "array"
+Include "filesystem"
 Include "registry"
 
 '----------------------------------------------------------------------------------------
@@ -307,7 +308,7 @@ Function ConfigureOutlookDefaultSignature(ByRef objUser, ByVal signatureLocalDir
 	
 	Dim availableSignaturesNames: availableSignaturesNames = GetAvailableSignatureNames(objUser)
 	If ArraySize(availableSignaturesNames) = 0 Then
-		LogInfo("There are no available signature names for '" & objUser.mail & "'")
+		LogInfo("There are no available signatures for '" & objUser.mail & "'")
 	End If
 	
 	Dim newDefaultSignatureName: newDefaultSignatureName = DecideWhichSignatureToUse(currentDefaultSignatureName, availableSignaturesNames)
@@ -342,7 +343,10 @@ Sub Main()
 	
 	Dim signatureLocalDirectoryName: signatureLocalDirectoryName = "TeltecSolutions"
 	
-	Call CopyRemoteSignatureFiles(objUser, signatureLocalDirectoryName)
+	Dim copiedSignatures: copiedSignatures = CopyRemoteSignatureFiles(objUser, signatureLocalDirectoryName)
+	If Not copiedSignatures Then
+		Exit Sub
+	End If
 	
 	Call ConfigureOutlookDefaultSignature(objUser, signatureLocalDirectoryName, gVersionOutlook2003)
 	Call ConfigureOutlookDefaultSignature(objUser, signatureLocalDirectoryName, gVersionOutlook2007)
