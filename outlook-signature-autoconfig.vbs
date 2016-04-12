@@ -219,11 +219,19 @@ End Function
 
 ' Copy signature files from remote location to local
 Function CopyRemoteSignatureFiles(ByRef objUser, ByVal signatureLocalDirectoryName)
+	CopyRemoteSignatureFiles = False
+	
 	' Local directory to store signature files.
 	Dim localDirectoryPath: localDirectoryPath = CreateLocalSignatureDirectory(signatureLocalDirectoryName)		
 	
+	Dim signatureFolder: signatureFolder = gConfigSignaturesSourceLocation + "\" + objUser.samAccountName
+	If Not FolderExists(signatureFolder) Then
+		LogError("Signature folder '" & signatureFolder & "' does not exist for user '" & objUser.samAccountName & "'")
+		Exit Function
+	End If
+	
 	Dim fso: Set fso = CreateObject("Scripting.FileSystemObject")
-	Dim baseFolder: Set baseFolder = fso.GetFolder(gConfigSignaturesSourceLocation + "\" + objUser.samAccountName)
+	Dim baseFolder: Set baseFolder = fso.GetFolder(signatureFolder)
 	' LogDebug("baseFolder.Path = " & baseFolder.Path)
 	
 	' Copy all files from remote directory
@@ -249,6 +257,8 @@ Function CopyRemoteSignatureFiles(ByRef objUser, ByVal signatureLocalDirectoryNa
 	
 	Set baseFolder = Nothing
 	Set fso = Nothing
+	
+	CopyRemoteSignatureFiles = True
 End Function
 
 '----------------------------------------------------------------------------------------
@@ -260,6 +270,12 @@ Function GetAvailableSignatureNames(objUser)
 	Dim baseFolder: Set baseFolder = fso.GetFolder(gConfigSignaturesSourceLocation + "\" + objUser.samAccountName)
 	
 	Dim result()
+	
+	If baseFolder.Files.Count = 0 Then
+		GetAvailableSignatureNames = vbNull
+		Exit Function
+	End If
+	
 	ReDim result(baseFolder.Files.Count)
 	
 	Dim i: i = 0
