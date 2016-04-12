@@ -23,7 +23,7 @@ Function IsArrayOf(ByRef value, ByVal valueType)
 End Function
 
 Function ArraySize(ByRef array())
-	ArraySize = UBound(array)
+	ArraySize = UBound(array) + 1
 End Function
 
 Function ArrayCountNotEmptyOrNull(ByRef array())

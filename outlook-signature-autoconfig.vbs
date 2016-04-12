@@ -303,10 +303,13 @@ Function ConfigureOutlookDefaultSignature(ByRef objUser, ByVal signatureLocalDir
 	Call ConfigureSignatureLocation(signatureLocalDirectoryName, outlookVersion)
 	
 	Dim currentDefaultSignatureName: currentDefaultSignatureName = GetDefaultSignatureName(objUser.mail, "", outlookVersion)
-	If IsNullOrEmptyStr(currentDefaultSignatureName) Then Exit Function
 	LogInfo("The current default signature is '" & currentDefaultSignatureName & "'")
 	
 	Dim availableSignaturesNames: availableSignaturesNames = GetAvailableSignatureNames(objUser)
+	If ArraySize(availableSignaturesNames) = 0 Then
+		LogInfo("There are no available signature names for '" & objUser.mail & "'")
+	End If
+	
 	Dim newDefaultSignatureName: newDefaultSignatureName = DecideWhichSignatureToUse(currentDefaultSignatureName, availableSignaturesNames)
 	LogInfo("Decided to use '" & newDefaultSignatureName & "' as default signature")
 	

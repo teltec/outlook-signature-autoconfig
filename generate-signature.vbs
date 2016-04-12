@@ -138,8 +138,7 @@ End Function
 
 Function ParseGroups(ByRef inMemberOfArray, ByRef outResultArray())
 	' Find the groups named assinaturas-SOMETHING and store all SOMETHING's in `outResultArray`
-	Dim memberOfArraySize: memberOfArraySize = UBound(inMemberOfArray)
-	ReDim outResultArray(memberOfArraySize)
+	ReDim outResultArray(UBound(inMemberOfArray))
 	Dim groupDN
 	Dim countGroup: countGroup = 0
 	For Each groupDN in inMemberOfArray
