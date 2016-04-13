@@ -7,7 +7,7 @@
 Option Explicit
 
 Function IsArray(ByRef value)
-	If VarType(value) & vbArray Then
+	If ((VarType(value) And vbArray) = vbArray) Then
 		IsArray = True
 	Else
 		IsArray = False
@@ -15,7 +15,7 @@ Function IsArray(ByRef value)
 End Function
 
 Function IsArrayOf(ByRef value, ByVal valueType)
-	If (VarType(value) & vbArray) And (VarType(value) & valueType) Then
+	If ((VarType(value) And vbArray) = vbArray) And ((VarType(value) And valueType) = valueType) Then
 		IsArrayOf = True
 	Else
 		IsArrayOf = False
@@ -23,14 +23,14 @@ Function IsArrayOf(ByRef value, ByVal valueType)
 End Function
 
 Function ArraySize(ByRef array())
+	ArraySize = 0
+
 	If VarType(array) = vbNull Or VarType(array) = vbEmpty Then
-		ArraySize = 0
 		Exit Function
 	End If
-
+	
 	If Not IsArray(array) Then
-		LogDebug("ArraySize: the parameter is not an array")
-		ArraySize = 0
+		LogDebug("ArraySize: the parameter is not an array (array=" & array & ")")
 		Exit Function
 	End If
 	

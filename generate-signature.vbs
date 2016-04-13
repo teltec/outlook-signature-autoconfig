@@ -176,7 +176,8 @@ Function CreateSignatureFilesForLdapUser(ByVal targetDirectory, ByVal templateDi
 		LogError("Warnings for user " & attrEmail & ":" & vbCrlf & "- memberOf is empty" & vbCrlf)
 		Exit Function
 	End If
-	If Not IsArrayOf(memberOfArray, vbString) Then
+	
+	If Not IsArrayOf(memberOfArray, vbVariant) Then
 		LogError("Warnings for user " & attrEmail & ":" & vbCrlf & "- memberOf is not an array" & vbCrlf)
 		Exit Function
 	End If

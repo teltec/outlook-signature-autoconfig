@@ -269,13 +269,14 @@ Function GetAvailableSignatureNames(objUser)
 	Dim fso: Set fso = CreateObject("Scripting.FileSystemObject")
 	Dim baseFolder: Set baseFolder = fso.GetFolder(gConfigSignaturesSourceLocation + "\" + objUser.samAccountName)
 	
-	Dim result()
-	
 	If baseFolder.Files.Count = 0 Then
-		GetAvailableSignatureNames = vbNull
+		' Return nothing! It's important, because we check the result somewhere else.
+		Set baseFolder = Nothing
+		Set fso = Nothing
 		Exit Function
 	End If
 	
+	Dim result: result = Array()
 	ReDim result(baseFolder.Files.Count)
 	
 	Dim i: i = 0
