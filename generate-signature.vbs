@@ -2,7 +2,7 @@
 ' Create an HTML file for each user found on the LDAP user base
 ' to be used as signature on their email clients.
 '
-' Author: Jardel Weyrich
+' Author: Jardel Weyrich <jardel@teltecsolutions.com.br>
 ' Date  : Jan 28 2016
 '
 ' Example usage:

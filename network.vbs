@@ -1,7 +1,7 @@
 '
 ' Network module
 '
-' Author: Jardel Weyrich
+' Author: Jardel Weyrich <jardel@teltecsolutions.com.br>
 '
 
 Option Explicit

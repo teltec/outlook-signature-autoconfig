@@ -179,7 +179,7 @@ Function GetDefaultSignatureName(ByVal emailAddress, ByVal strProfile, ByVal out
 	Dim profileKeyPath: profileKeyPath = GetProfileRegKeyPath(emailAddress, strProfile, outlookVersion)
 	If IsNullOrEmptyStr(profileKeyPath) Then Exit Function
 	
-	' TODO: Testar com versoes 2003, 2007, 2010
+	' TODO: Test with versions 2003, 2007, 2010
 	Dim valueType
 	valueType = RegGetValueType(HKEY_CURRENT_USER, profileKeyPath, "New Signature")
 	If valueType = REG_INVALID Then Exit Function
@@ -200,7 +200,7 @@ Function SetDefaultSignatureName(ByVal emailAddress, ByVal strSigName, ByVal str
 	
 	Dim value: value = strSigName
 	
-	' TODO: Testar com versoes 2003, 2007, 2010
+	' TODO: Test with versions 2003, 2007, 2010
 	
 	Dim valueType
 	

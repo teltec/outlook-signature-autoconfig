@@ -1,7 +1,7 @@
 '
 ' Registry module
 '
-' Author: Jardel Weyrich
+' Author: Jardel Weyrich <jardel@teltecsolutions.com.br>
 '
 
 Const HKEY_CURRENT_USER = &H80000001
