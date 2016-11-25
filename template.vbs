@@ -324,6 +324,35 @@ End Function
 
 '----------------------------------------------------------------------------------------
 
+Function ReadTemplateFromFileUTF8(templateFilePath)
+	If Not FileExists(templateFilePath) Then
+		LogError("Template file does not exist - " & templateFilePath & vbCrlf)
+		Exit Function
+	End If
+
+	' ADODB.Stream file I/O constants
+	Const adTypeBinary          = 1
+	Const adTypeText            = 2
+
+	Dim objStream: Set objStream = CreateObject("ADODB.Stream")
+	objStream.Open
+	objStream.Type = adTypeText
+	objStream.Position = 0
+	' Use UTF-8 so that accents/diacritics actually work.
+	objStream.CharSet = "utf-8"
+	' Read file
+	objStream.LoadFromFile(templateFilePath)
+	Dim templateStr: templateStr = objStream.ReadText()
+	
+	' Close it.
+	objStream.Close
+	Set objStream = Nothing
+	
+	ReadTemplateFromFileUTF8 = templateStr
+End Function
+
+'----------------------------------------------------------------------------------------
+
 ' Arguments:
 '   templateStr - String containing the template data.
 ' 	contextDict - Dictionary containing all variables to be used during the template rendering.

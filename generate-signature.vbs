@@ -242,7 +242,7 @@ Function CreateSignatureFilesForLdapUser(ByVal targetDirectory, ByVal templateDi
 		LogError("Warnings for user " & attrEmail & ":" & vbCrlf & errorMessage)
 	End If
 	
-	' Write the signature files
+	' Write the signature files.
 	Const ForReading = 1
 	
 	' DebugGroups(signatureGroupNames, signatureGroupNamesCount)
@@ -250,12 +250,11 @@ Function CreateSignatureFilesForLdapUser(ByVal targetDirectory, ByVal templateDi
 	Dim i
 	For i = 0 to signatureGroupNamesCount - 1
 		Dim signatureGroupName: signatureGroupName = signatureGroupNames(i)
-		Dim objFSO
 		
 		' Read the template file.
 		Dim inputTemplateContent
 		If Not IsNullOrEmptyStr(templateDirectory) Then
-			' Default template
+			' Default template.
 			Dim templateFilePath: templateFilePath = templateDirectory & "\" & "DEFAULT.htm.template"
 			If Not IsNullOrEmptyStr(signatureGroupName) Then
 				templateFilePath = templateDirectory & "\" & signatureGroupName & ".htm"
@@ -266,20 +265,10 @@ Function CreateSignatureFilesForLdapUser(ByVal targetDirectory, ByVal templateDi
 				Exit Function
 			End If
 			
-			inputTemplateContent = ReadTemplateFromFile(templateFilePath)
+			inputTemplateContent = ReadTemplateFromFileUTF8(templateFilePath)
 		End If
 		
-		' Create the signature file.
-		Set objFSO = CreateObject("Scripting.FileSystemObject")
-		Dim signatureFileDirectory: signatureFileDirectory = targetDirectory & "\" & nomeUsuario
-		Dim signatureFilePath: signatureFilePath = signatureFileDirectory & "\" & signatureGroupName & ".htm"
-		
-		CreateFolderRecursive(signatureFileDirectory)
-		
-		Dim signatureFile
-		Set signatureFile = objFSO.CreateTextFile(signatureFilePath, True)
-		
-		' Prepare the template
+		' Prepare the template.
 		If IsNullOrEmptyStr(inputTemplateContent) Then
 			inputTemplateContent = "" _
 				& "Atenciosamente," & vbCrlf _
@@ -304,15 +293,36 @@ Function CreateSignatureFilesForLdapUser(ByVal targetDirectory, ByVal templateDi
 		Call context.Append("ATTR_MOSTRA_CELULAR", hasAttrCelular)
 		Call context.Append("ATTR_CELULAR_DDD", attrCelular(0))
 		Call context.Append("ATTR_CELULAR", attrCelular(1))
+		
 		Dim rendered: rendered = RenderTemplate(inputTemplateContent, context)
 		
-		' Write it.
-		signatureFile.Write(rendered)
+		Dim signatureFileDirectory: signatureFileDirectory = targetDirectory & "\" & nomeUsuario
+		Dim signatureFilePath: signatureFilePath = signatureFileDirectory & "\" & signatureGroupName & ".htm"
+		
+		CreateFolderRecursive(signatureFileDirectory)
+
+		' ADODB.Stream file I/O constants
+		Const adTypeBinary          = 1
+		Const adTypeText            = 2
+		Const adSaveCreateNotExist  = 1
+		Const adSaveCreateOverWrite = 2
+
+		' Create stream to write the signature as UTF-8.
+		Dim objStream: Set objStream = CreateObject("ADODB.Stream")
+		objStream.Open
+		objStream.Type = adTypeText
+		objStream.Position = 0
+		' Use UTF-8 so that accents/diacritics actually work.
+		objStream.CharSet = "utf-8"
+		' Write rendered template.
+		objStream.WriteText(rendered)
+
+		' Save it.
+		Call objStream.SaveToFile(signatureFilePath, adSaveCreateOverWrite)
 		
 		' Close it.
-		signatureFile.Close
-		Set signatureFile = Nothing
-		Set objFSO = Nothing
+		objStream.Close
+		Set objStream = Nothing
 	Next
 End Function
 
@@ -391,7 +401,7 @@ Sub Test_Template_1()
 	Call context.Append("ATTR_MOSTRA_CELULAR", False)
 	Call context.Append("ATTR_CELULAR_DDD", "48")
 	Call context.Append("ATTR_CELULAR", "9-9999-0000")
-	Dim rendered: rendered = RenderTemplate(ReadTemplateFromFile("c:\temp\a.txt"), context)
+	Dim rendered: rendered = RenderTemplate(ReadTemplateFromFileUTF8("c:\temp\a.txt"), context)
 	Wscript.Echo rendered
 	Wscript.Quit
 End Sub
