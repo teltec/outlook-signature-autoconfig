@@ -21,6 +21,8 @@ Function FileExists(ByVal fullpath)
 End Function
 
 Function CreateFolderRecursive(ByVal fullpath)
+	CreateFolderRecursive = True
+
 	Dim ofs
 	Set ofs = WScript.CreateObject("Scripting.FileSystemObject")
 	If ofs.FolderExists(fullpath) Then
@@ -40,13 +42,24 @@ Function CreateFolderRecursive(ByVal fullpath)
 		parts = Split(fullpath, "\")
 		path = ""
 	End If
-	
+
 	Dim dir
 	For Each dir In parts
 		If path <> "" And path <> "\\" Then path = path & "\"
 		If path <> "\\" Then
 			path = path & dir
-			If Not ofs.FolderExists(path) Then ofs.CreateFolder(path)
+			On Error Resume Next
+			If Not ofs.FolderExists(path) Then
+				ofs.CreateFolder(path)
+			End If
+			If Err.Number <> 0 Then
+				LogError("Cannot access/create folder " & path)
+				Err.Clear
+				Set ofs = Nothing
+				CreateFolderRecursive = False
+				Exit Function
+			End If
+			On Error Goto 0
 		Else
 			path = path & dir
 		End If
