@@ -153,7 +153,7 @@ End Function
 
 '----------------------------------------------------------------------------------------
 
-Function DebugGroups(ByRef signatureGroupNames, ByVal signatureGroupNamesCount)
+Function DebugGroups(ByVal attrEmail, ByRef signatureGroupNames, ByVal signatureGroupNamesCount)
 	Dim i
 	For i = 0 to signatureGroupNamesCount - 1
 		Dim AsignatureGroupName: AsignatureGroupName = signatureGroupNames(i)
@@ -251,8 +251,8 @@ Function CreateSignatureFilesForLdapUser(ByVal targetDirectory, ByVal templateDi
 	' Write the signature files.
 	Const ForReading = 1
 	
-	' DebugGroups(signatureGroupNames, signatureGroupNamesCount)
-		
+	' Call DebugGroups(attrEmail, signatureGroupNames, signatureGroupNamesCount)
+
 	Dim i
 	For i = 0 to signatureGroupNamesCount - 1
 		Dim signatureGroupName: signatureGroupName = signatureGroupNames(i)
