@@ -249,9 +249,19 @@ Function CopyRemoteSignatureFiles(ByRef objUser, ByVal signatureLocalDirectoryNa
 			Set baseFolder = Nothing
 			Exit Function
 		End If
-		
+
 		' Copy signature file(s) from network share to local directory.
+		On Error Resume Next
 		fso.CopyFile remoteSignatureFilePath, localSignatureFilePath 
+		If Err.Number <> 0 Then
+			LogError("Failed to copy file to " & localSignatureFilePath)
+			Err.Clear
+			Set baseFolder = Nothing
+			Set fso = Nothing
+			CopyRemoteSignatureFiles = False
+			Exit Function
+		End If
+		On Error Goto 0
 		LogInfo("Copied signature to '" & localSignatureFilePath & "'")
 	Next
 	
