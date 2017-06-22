@@ -163,6 +163,12 @@ End Function
 
 '----------------------------------------------------------------------------------------
 
+' ADODB.Stream file I/O constants
+Const generator_adTypeBinary          = 1
+Const generator_adTypeText            = 2
+Const generator_adSaveCreateNotExist  = 1
+Const generator_adSaveCreateOverWrite = 2
+
 ' This function creates one or more signature files (<targetDirectory>\<username>-<signatureGroup>.htm), for the provided user,
 ' where <signatureGroup> is anything after the "-" in "assinaturas-ANYTHING".
 Function CreateSignatureFilesForLdapUser(ByVal targetDirectory, ByVal templateDirectory, ByRef objLdapUser)
@@ -301,16 +307,10 @@ Function CreateSignatureFilesForLdapUser(ByVal targetDirectory, ByVal templateDi
 		
 		CreateFolderRecursive(signatureFileDirectory)
 
-		' ADODB.Stream file I/O constants
-		Const adTypeBinary          = 1
-		Const adTypeText            = 2
-		Const adSaveCreateNotExist  = 1
-		Const adSaveCreateOverWrite = 2
-
 		' Create stream to write the signature as UTF-8.
 		Dim objStream: Set objStream = CreateObject("ADODB.Stream")
 		objStream.Open
-		objStream.Type = adTypeText
+		objStream.Type = generator_adTypeText
 		objStream.Position = 0
 		' Use UTF-8 so that accents/diacritics actually work.
 		objStream.CharSet = "utf-8"
@@ -318,7 +318,7 @@ Function CreateSignatureFilesForLdapUser(ByVal targetDirectory, ByVal templateDi
 		objStream.WriteText(rendered)
 
 		' Save it.
-		Call objStream.SaveToFile(signatureFilePath, adSaveCreateOverWrite)
+		Call objStream.SaveToFile(signatureFilePath, generator_adSaveCreateOverWrite)
 		
 		' Close it.
 		objStream.Close

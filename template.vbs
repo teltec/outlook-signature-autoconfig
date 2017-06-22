@@ -331,12 +331,12 @@ Function ReadTemplateFromFileUTF8(templateFilePath)
 	End If
 
 	' ADODB.Stream file I/O constants
-	Const adTypeBinary          = 1
-	Const adTypeText            = 2
+	Const template_adTypeBinary = 1
+	Const template_adTypeText   = 2
 
 	Dim objStream: Set objStream = CreateObject("ADODB.Stream")
 	objStream.Open
-	objStream.Type = adTypeText
+	objStream.Type = template_adTypeText
 	objStream.Position = 0
 	' Use UTF-8 so that accents/diacritics actually work.
 	objStream.CharSet = "utf-8"
