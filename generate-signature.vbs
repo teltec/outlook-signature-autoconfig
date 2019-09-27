@@ -199,48 +199,48 @@ Function CreateSignatureFilesForLdapUser(ByVal targetDirectory, ByVal templateDi
 	'
 	' Read user attributes
 	'
-	Dim nomeUsuario: nomeUsuario = ConvertToString(objLdapUser.Fields("sAMAccountName"))
-	Dim attrNomeCompleto: attrNomeCompleto = ConvertToString(objLdapUser.Fields("displayName"))
-	Dim attrNomeCompletoSplit: attrNomeCompletoSplit = Split(attrNomeCompleto, "(")
-	attrNomeCompleto = Trim(attrNomeCompletoSplit(0))
-	Dim attrCargo: attrCargo = ConvertToString(objLdapUser.Fields("title"))
+	Dim attrUsername: attrUsername = ConvertToString(objLdapUser.Fields("sAMAccountName"))
+	Dim attrDisplayName: attrDisplayName = ConvertToString(objLdapUser.Fields("displayName"))
+	Dim attrDisplayNameSplit: attrDisplayNameSplit = Split(attrDisplayName, "(")
+	attrDisplayName = Trim(attrDisplayNameSplit(0))
+	Dim attrTitle: attrTitle = ConvertToString(objLdapUser.Fields("title"))
 	
-	Dim attrEmpresa: attrEmpresa = ConvertToString(objLdapUser.Fields("company"))
-	Dim hasValidAttrEmpresa: hasValidAttrEmpresa = Not IsNullOrEmptyStr(attrEmpresa)
+	Dim attrCompanyName: attrCompanyName = ConvertToString(objLdapUser.Fields("company"))
+	Dim hasValidAttrCompanyName: hasValidAttrCompanyName = Not IsNullOrEmptyStr(attrCompanyName)
 	
-	Dim rawAttrTelefone: rawAttrTelefone = ConvertToString(objLdapUser.Fields("homePhone"))
-	Dim hasAttrTelefone: hasAttrTelefone = Not IsNullOrEmptyStr(rawAttrTelefone)
-	Dim attrTelefone: attrTelefone = FormatPhoneNumber(rawAttrTelefone)
+	Dim rawAttrHomePhone: rawAttrHomePhone = ConvertToString(objLdapUser.Fields("homePhone"))
+	Dim hasAttrHomePhone: hasAttrHomePhone = Not IsNullOrEmptyStr(rawAttrHomePhone)
+	Dim attrHomePhone: attrHomePhone = FormatPhoneNumber(rawAttrHomePhone)
 	
-	Dim attrRamal: attrRamal = ConvertToString(objLdapUser.Fields("telephoneNumber"))
-	Dim hasAttrRamal: hasAttrRamal = Not IsNullOrEmptyStr(attrRamal)
+	Dim attrTelephoneNumber: attrTelephoneNumber = ConvertToString(objLdapUser.Fields("telephoneNumber"))
+	Dim hasAttrTelephoneNumber: hasAttrTelephoneNumber = Not IsNullOrEmptyStr(attrTelephoneNumber)
 
-	Dim rawAttrCelular: rawAttrCelular = ConvertToString(objLdapUser.Fields("mobile"))
-	Dim hasAttrCelular: hasAttrCelular = Not IsNullOrEmptyStr(rawAttrCelular)
-	Dim attrCelular: attrCelular = FormatPhoneNumber(rawAttrCelular) ' Optional
+	Dim rawAttrMobile: rawAttrMobile = ConvertToString(objLdapUser.Fields("mobile"))
+	Dim hasAttrMobile: hasAttrMobile = Not IsNullOrEmptyStr(rawAttrMobile)
+	Dim attrMobile: attrMobile = FormatPhoneNumber(rawAttrMobile) ' Optional
 	
 	'
 	' Validate missing required fields
 	'
 	Dim errorMessage: errorMessage = ""
-	If IsNullOrEmptyStr(nomeUsuario)		Then errorMessage = errorMessage & "- sAMAccountName is missing" & vbCrlf
-	If IsNullOrEmptyStr(attrNomeCompleto)	Then errorMessage = errorMessage & "- displayName is missing" & vbCrlf
-	If IsNullOrEmptyStr(attrCargo)			Then errorMessage = errorMessage & "- title is missing" & vbCrlf
-	If IsNullOrEmptyStr(attrEmpresa)		Then errorMessage = errorMessage & "- company is missing" & vbCrlf
-	If IsNullOrEmptyStr(rawAttrTelefone)	Then errorMessage = errorMessage & "- homePhone is missing" & vbCrlf
-	If IsNullOrEmptyStr(attrRamal)			Then errorMessage = errorMessage & "- telephoneNumber is missing" & vbCrlf
+	If IsNullOrEmptyStr(attrUsername)		Then errorMessage = errorMessage & "- sAMAccountName is missing" & vbCrlf
+	If IsNullOrEmptyStr(attrDisplayName)	Then errorMessage = errorMessage & "- displayName is missing" & vbCrlf
+	If IsNullOrEmptyStr(attrTitle)			Then errorMessage = errorMessage & "- title is missing" & vbCrlf
+	If IsNullOrEmptyStr(attrCompanyName)	Then errorMessage = errorMessage & "- company is missing" & vbCrlf
+	If IsNullOrEmptyStr(rawAttrHomePhone)	Then errorMessage = errorMessage & "- homePhone is missing" & vbCrlf
+	If IsNullOrEmptyStr(attrTelephoneNumber)Then errorMessage = errorMessage & "- telephoneNumber is missing" & vbCrlf
 	
 	'
 	' Validate invalid formatted fields
 	'
 	
 	' Only show warning about homePhone format if the user informed it.
-	If hasAttrTelefone And (attrTelefone(0) = "INVALID_DDD_FORMAT" Or attrTelefone(1) = "INVALID_PHONE_FORMAT") Then
+	If hasAttrHomePhone And (attrHomePhone(0) = "INVALID_DDD_FORMAT" Or attrHomePhone(1) = "INVALID_PHONE_FORMAT") Then
 		errorMessage = errorMessage & "- homePhone expects format 9(0XX)XXXX-XXXX" & vbCrlf
 	End If
 	
 	' Only show warning about mobile format if the user informed it.
-	If hasAttrCelular And (attrCelular(0) = "INVALID_DDD_FORMAT" Or attrCelular(1) = "INVALID_PHONE_FORMAT") Then
+	If hasAttrMobile And (attrMobile(0) = "INVALID_DDD_FORMAT" Or attrMobile(1) = "INVALID_PHONE_FORMAT") Then
 		errorMessage = errorMessage & "- mobile expects format 9(0XX)XXXX-XXXX" & vbCrlf
 	End If
 	
@@ -279,30 +279,32 @@ Function CreateSignatureFilesForLdapUser(ByVal targetDirectory, ByVal templateDi
 			inputTemplateContent = "" _
 				& "Atenciosamente," & vbCrlf _
 				& vbCrlf _
-				& "{{ATTR_NOME_COLABORADOR}}" & vbCrlf _
-				& "{{ATTR_CARGO}}" & vbCrlf _
+				& "{{ATTR_DISPLAY_NAME}}" & vbCrlf _
+				& "{{ATTR_TITLE}}" & vbCrlf _
 				& vbCrlf _
-				& "{{ATTR_NOME_EMPRESA}}" & vbCrlf _
-				& "Fone: {{ATTR_TELEFONE}}{% if ATTR_MOSTRA_RAMAL %} | DDR: {{ATTR_RAMAL}}{% end if %}{% if ATTR_MOSTRA_CELULAR %} | Cel: {{ATTR_CELULAR}}{% end if %}" & vbCrlf _
+				& "{{ATTR_COMPANY_NAME}}" & vbCrlf _
+				& "Fone: ({{ATTR_HOMEPHONE_DDD}})-{{ATTR_HOMEPHONE}}{% if ATTR_SHOW_TELEPHONENUMBER %} | DDR: {{ATTR_TELEPHONENUMBER}}{% end if %}{% if ATTR_SHOW_MOBILE %} | Cel: {{ATTR_MOBILE}}{% end if %}" & vbCrlf _
 				& vbCrlf _
-				& "[{{ATTR_IMAGEM_URL}}]({{ATTR_IMAGEM_LINK}})" & vbCrlf
+				& "{{ATTR_PHOTO_ID}}" & vbCrlf
 		End If
 		
 		Dim context: Set context = New Dictionary
-		Call context.Append("ATTR_NOME_COLABORADOR", attrNomeCompleto)
-		Call context.Append("ATTR_CARGO", attrCargo)
-		Call context.Append("ATTR_NOME_EMPRESA", attrEmpresa)
-		Call context.Append("ATTR_TELEFONE_DDD", attrTelefone(0))
-		Call context.Append("ATTR_TELEFONE", attrTelefone(1))
-		Call context.Append("ATTR_MOSTRA_RAMAL", hasAttrRamal)
-		Call context.Append("ATTR_RAMAL", attrRamal)
-		Call context.Append("ATTR_MOSTRA_CELULAR", hasAttrCelular)
-		Call context.Append("ATTR_CELULAR_DDD", attrCelular(0))
-		Call context.Append("ATTR_CELULAR", attrCelular(1))
+		Call context.Append("ATTR_USERNAME", attrUsername)
+		Call context.Append("ATTR_DISPLAY_NAME", attrDisplayName)
+		Call context.Append("ATTR_TITLE", attrTitle)
+		Call context.Append("ATTR_COMPANY_NAME", attrCompanyName)
+		Call context.Append("ATTR_HOMEPHONE_DDD", attrHomePhone(0))
+		Call context.Append("ATTR_HOMEPHONE", attrHomePhone(1))
+		Call context.Append("ATTR_SHOW_TELEPHONENUMBER", hasAttrTelephoneNumber)
+		Call context.Append("ATTR_TELEPHONENUMBER", attrTelephoneNumber)
+		Call context.Append("ATTR_SHOW_MOBILE", hasAttrMobile)
+		Call context.Append("ATTR_MOBILE_DDD", attrMobile(0))
+		Call context.Append("ATTR_MOBILE", attrMobile(1))
+		Call context.Append("ATTR_PHOTO_ID", attrUsername)
 		
 		Dim rendered: rendered = RenderTemplate(inputTemplateContent, context)
 		
-		Dim signatureFileDirectory: signatureFileDirectory = targetDirectory & "\" & nomeUsuario
+		Dim signatureFileDirectory: signatureFileDirectory = targetDirectory & "\" & attrUsername
 		Dim signatureFilePath: signatureFilePath = signatureFileDirectory & "\" & signatureGroupName & ".htm"
 		
 		CreateFolderRecursive(signatureFileDirectory)
@@ -392,15 +394,18 @@ End Sub
 
 Sub Test_Template_1()
 	Dim context: Set context = New Dictionary
-	Call context.Append("ATTR_NOME_COLABORADOR", "John Doe")
-	Call context.Append("ATTR_CARGO", "Chief of Nothing")
-	Call context.Append("ATTR_NOME_EMPRESA", "My Company Name")
-	Call context.Append("ATTR_TELEFONE_DDD", "48")
-	Call context.Append("ATTR_TELEFONE", "1234-5678")
-	Call context.Append("ATTR_RAMAL", "999")
-	Call context.Append("ATTR_MOSTRA_CELULAR", False)
-	Call context.Append("ATTR_CELULAR_DDD", "48")
-	Call context.Append("ATTR_CELULAR", "9-9999-0000")
+	Call context.Append("ATTR_USERNAME", "johndoe")
+	Call context.Append("ATTR_DISPLAY_NAME", "John Doe")
+	Call context.Append("ATTR_TITLE", "Chief of Nothing")
+	Call context.Append("ATTR_COMPANY_NAME", "My Company Name")
+	Call context.Append("ATTR_HOMEPHONE_DDD", "48")
+	Call context.Append("ATTR_HOMEPHONE", "1234-5678")
+	Call context.Append("ATTR_TELEPHONENUMBER", "999")
+	Call context.Append("ATTR_SHOW_MOBILE", False)
+	Call context.Append("ATTR_MOBILE_DDD", "48")
+	Call context.Append("ATTR_MOBILE", "9-9999-0000")
+	Call context.Append("ATTR_PHOTO_ID", "johndoe")
+
 	Dim rendered: rendered = RenderTemplate(ReadTemplateFromFileUTF8("c:\temp\a.txt"), context)
 	Wscript.Echo rendered
 	Wscript.Quit
