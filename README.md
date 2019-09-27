@@ -23,3 +23,7 @@ Run manually or via GPO. This will copy the user generated signature file(s) fro
 ## Notes
 
 - It's important to specify `\\host\path` instead of `X:\path` if you're running `outlook-signature-autoconfig.vbs` via GPO during user login. This is because `X:` is a network mapped unit that may be mapped via GPO, so it might not yet be mounted when our script runs;
+
+## Screenshot (example template)
+
+![Example Template](Templates/example/screenshot.png)
